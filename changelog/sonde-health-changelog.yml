@@ -1,0 +1,95 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+scheme: numbered releases (major.minor), dated, published as a Confluence page
+current_version: '3.4'
+current_version_date: '2022-08-29'
+staleness_note: >-
+  The newest dated entry on Sonde's API release-notes page is API 3.4 (29 August 2022).
+  No cloud-API release has been published in the four years since; Sonde's more recent
+  developer activity in the same documentation space is on the Passive/Edge mobile SDKs,
+  which have no dated changelog of their own.
+entry_count: 7
+entries:
+- version: '3.4'
+  date: '2022-08-29'
+  breaking: false
+  highlights:
+  - M3 questionnaire deployment and scoring
+  - Partner questionnaire creation
+  additions:
+  - POST /platform/v2/inference/inference-parameters
+  - POST /platform/v2/inference/scores
+  - GET /platform/v2/inference/scores/{scoreId}
+  - POST /platform/v1/questionnaire
+- version: '3.3'
+  date: '2021-09-20'
+  breaking: false
+  highlights:
+  - Crispness acoustic score added to Mental Fitness Voice Features
+  - Aggregate Mental Fitness score (integration of the 6 acoustic scores) added
+  changes:
+  - GET /platform/async/v1/inference/voice-feature-scores/{asyncJobId}
+- version: '3.2'
+  date: '2021-09-06'
+  breaking: false
+  highlights:
+  - Inference v2 APIs introduced to infer a measure score from two audio samples
+  additions:
+  - POST /platform/v2/inference/inference-parameters
+  - PUT /platform/v2/inference/inference-parameters/{inferenceParameterId}
+  - POST /platform/v2/inference/scores
+  - GET /platform/v2/inference/scores/{scoreId}
+- version: '3.1'
+  date: '2021-06-16'
+  breaking: false
+  highlights:
+  - TranscriptionService — speech-to-text for health-condition audio files
+  - Voice-feature-score history filterable by time (from/to) and user
+  additions:
+  - POST /platform/async/v1/transcriptions
+  - GET /platform/async/v1/transcriptions/{asyncJobId}
+  - GET /platform/v1/storage/files/{filePath}/transcriptions
+  - GET /platform/v1/inference/voice-feature-scores
+  - GET /platform/v1/inference/voice-feature-scores/{voiceFeatureScoreId}
+- version: '3.0'
+  date: '2021-05-24'
+  breaking: false
+  highlights:
+  - Acoustic voice features for Mental Fitness
+  additions:
+  - POST /platform/v2/users
+  - POST /platform/async/v1/inference/voice-feature-scores
+  - GET /platform/async/v1/inference/voice-feature-scores/{asyncJobId}
+  - GET /platform/v1/measures/name/{measureName}/voice-features
+- version: '2.6'
+  date: '2021-04-07'
+  breaking: false
+  behaviour_change: true
+  highlights:
+  - >-
+    Elicitation Check (ELCK) for Respiratory Symptom Risk voice samples — automatic
+    validation of energy level, voice presence, and correct elicitation (a single
+    continuous "ahh" held for 6 seconds). Failing samples are rejected.
+  - >-
+    New failure response on POST /platform/v1/inference/scores — HTTP 422 with error
+    code ELICITATION_CHECK_FAILED. No additional API calls are required to opt in,
+    so integrators saw a new rejection path without changing code.
+  notes:
+  - Sonde states Elicitation Check accuracy is approximately 80%.
+  - Sonde recommends asking for no more than 3 voice samples before treating the test
+    as unavailable.
+- version: '2.5'
+  date: '2021-02'
+  breaking: false
+  highlights:
+  - Backward compatible with API 1.0, adding the API 2.0 and 2.5 resources
+  additions:
+  - QuestionnaireManager — return a questionnaire to show in the partner app and capture
+    its responses
+  - UserService — update device type and device manufacturer
+  - InferenceService — historical score data for one or many subjects over a date/time
+    range
+  - StorageService — download submitted audio files
+deprecations_ref: lifecycle/sonde-health-lifecycle.yml

@@ -1,0 +1,122 @@
+generated: '2026-08-28'
+method: probed
+source: live HTTP probes, 2026-08-28
+summary: >-
+  No /.well-known/ document is served on any Sonde-controlled host. The marketing site
+  404s every path; the API gateway and admin portal answer 403 "Missing Authentication
+  Token" for every path (an API Gateway catch-all, not a document); the advertised
+  status host does not answer at all. NO WellKnown or SecurityTxt pointer is emitted in
+  apis.yml — this file records a verified absence, not a presence.
+hosts:
+- host: www.sondehealth.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: sondehealth.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: api.sondeservices.com
+  note: >-
+    Amazon API Gateway. Every path — including / — returns 403
+    {"message":"Missing Authentication Token"}. This is the gateway's catch-all, not a
+    served document; treated as a miss.
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 403
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+    file: null
+  - path: /.well-known/api-catalog
+    status: 403
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 403
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 403
+    file: null
+  - path: /.well-known/agent.json
+    status: 403
+    file: null
+- host: us.sondeservices.com
+  note: Sonde admin portal (Angular SPA behind CloudFront). All /.well-known/* return 403.
+  documents:
+  - path: /.well-known/security.txt
+    status: 403
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 403
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 403
+    file: null
+  - path: /.well-known/api-catalog
+    status: 403
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 403
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 403
+    file: null
+  - path: /.well-known/agent.json
+    status: 403
+    file: null
+- host: status.sondeservices.com
+  note: >-
+    Advertised by Sonde's support page as "Services Health". DNS resolves to
+    146.190.1.228 but the host does not answer — connection timed out after 15s on both
+    https and http.
+  documents:
+  - path: /.well-known/security.txt
+    status: '<no response>'
+    file: null
+  - path: /.well-known/agent-card.json
+    status: '<no response>'
+    file: null
+  - path: /.well-known/agent.json
+    status: '<no response>'
+    file: null

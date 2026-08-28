@@ -1,0 +1,32 @@
+generated: '2026-08-28'
+method: searched
+source: https://www.sondehealth.com/contact
+docs_checked:
+- url: https://www.sondehealth.com/
+  status: 200
+- url: https://www.sondehealth.com/dev-documentation
+  status: 200
+- url: https://www.sondehealth.com/support
+  status: 200
+- url: https://www.sondehealth.com/contact
+  status: 200
+- url: https://sondehealth.atlassian.net/wiki/spaces/SA/overview
+  status: 200
+plan_count: 0
+plans: []
+model: contact-sales
+currency: null
+note: >-
+  Sonde Health publishes no pricing page and no plan tiers. There is no /pricing route
+  on sondehealth.com, no rate card in either documentation space, and no self-service
+  signup — access begins with "Please contact Sonde to access documentation and platform"
+  and credentials plus scopes are "allocated as per your contract". Commercial terms are
+  negotiated per partner (API/SDK licensing for health systems, employers, wellness
+  providers, and OEM device makers). An honest zero, not an omission.
+metering_signal:
+  note: >-
+    Billing is usage-metered — the SDK docs state that "For billing and building
+    personalized models, usage metering and meta-data is uploaded to the backend",
+    including scores, timestamp, subject year-of-birth, gender and device OS/model.
+    The unit price is not published.
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2726330374

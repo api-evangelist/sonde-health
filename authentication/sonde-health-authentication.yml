@@ -1,0 +1,72 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+docs:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706702379/Mental+Fitness+Voice+Features+API
+- https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+summary:
+  types:
+  - oauth2
+  - apiKey
+  primary: oauth2-client-credentials
+  api_key_in:
+  - header
+  note: >-
+    The published OpenAPI declares the scheme as `type: apiKey` in the Authorization
+    header, but the underlying mechanism the docs describe is OAuth 2.0
+    client_credentials fronted by an Amazon Cognito user pool
+    (x-amazon-apigateway-authtype: cognito_user_pools). Both facts are recorded here
+    rather than picking one.
+schemes:
+- name: OAuth2
+  type: oauth2
+  flow: clientCredentials
+  token_url: https://api.sondeservices.com/platform/v1/oauth2/token
+  token_url_screening_api: https://api.sondeservices.com/platform/api/v1/oauth2/token
+  client_authentication: >-
+    HTTP Basic — Authorization: Basic base64(client-id:client-secret). The docs show
+    `echo -n "<client-id>:<client-secret>" | openssl base64 -A`.
+  request_content_type: application/x-www-form-urlencoded
+  grant_type: client_credentials
+  token_type: Bearer
+  expires_in_seconds: 3600
+  bearer_header: 'Authorization: <access_token>'
+  scopes_ref: scopes/sonde-health-scopes.yml
+  authorizer:
+    type: cognito_user_pools
+    declared_in: openapi/sonde-health-screening-api-openapi.yaml
+  sources:
+  - https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706702379/Mental+Fitness+Voice+Features+API
+  - openapi/sonde-health-screening-api-openapi.yaml
+credential_issuance:
+  self_service: false
+  process: >-
+    Credentials (client-id / client-secret) are issued by Sonde during partner
+    registration/onboarding; scopes are allocated per contract. There is no public
+    self-service key issuance.
+  contact: support@sondehealth.com
+  registration_docs: https://sondehealth.atlassian.net/wiki/spaces/BAC/pages/2987622403/Sonde+Health+API+Platform+Portal+-+Registration+flow
+  registration_docs_gated: true
+  registration_docs_probe:
+    fetched: '2026-08-28'
+    http_status: 200
+    detail: >-
+      Sonde's public support page links this "API Platform Portal - Registration flow"
+      page, but the BAC Confluence space is restricted: the URL returns 200 carrying an
+      Atlassian login prompt rather than the registration instructions, and the
+      Confluence content API returns an empty body for the page id. The two
+      documentation spaces that ARE public are SA (Sonde Health Platform Documentation)
+      and SPPA (Sonde Product Partner API).
+  partner_portal: https://us.sondeservices.com/
+sdk_authentication:
+  note: >-
+    The Android/iOS Passive and Edge SDKs initialise with clientId, clientSecret and
+    an optional clientCode rather than a bearer token.
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/3303899168/Android+SDK+Initialization
+guidance:
+  - Keep client-credentials server-side; the docs explicitly warn against shipping them
+    in client-side code or public repositories.
+  - Mint a narrowly scoped token per device task (e.g. only sonde-platform/storage.write
+    for an upload) rather than sharing a full-privilege token with a handset.
+  - Tokens expire after 3600 seconds and must be re-fetched by the partner backend.

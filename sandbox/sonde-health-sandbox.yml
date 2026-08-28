@@ -1,0 +1,55 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2800156688/Getting+Started%3A+Sonde+Cloud+API
+docs:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2800156688/Getting+Started%3A+Sonde+Cloud+API
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2915926042/Post+Integration/Pre-Live+Validation
+model: test-credential
+self_service: false
+summary: >-
+  Sonde issues a Test key when a partner opens an account, and the same production
+  endpoints are exercised with it. There is no separate sandbox host, no hosted API
+  console or playground, and no publicly documented test-vs-live key prefix scheme.
+modes:
+- name: test
+  how_obtained: >-
+    "Once you open an account with Sonde, you will receive a Test key. This key will
+    allow you to try out any of the use cases."
+  base_url: https://api.sondeservices.com
+  key_prefix: not published
+- name: live
+  how_obtained: Production keys are requested from support@sondehealth.com after
+    post-integration / pre-live validation.
+  base_url: https://api.sondeservices.com
+  key_prefix: not published
+test_data:
+  published_values: none
+  note: >-
+    Sonde publishes no magic test identifiers, no synthetic audio fixtures, and no
+    canned score payloads. Testing means recording a real voice sample that satisfies
+    the elicitation requirement for the measure. NEVER invent test values here.
+  audio_requirements:
+    respiratory: A single continuous held "ahh" vowel for 6 seconds (~600 KB WAV).
+    mental_fitness: 30 seconds of free speech in response to a prompt (~2.5 MB WAV).
+    format_docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688122937/Audio+Format+Specifications
+quality_gate:
+  name: Elicitation Check (ELCK)
+  applies_to: Respiratory Symptoms Risk
+  behaviour: >-
+    Samples are automatically validated for energy level, voice presence, and correct
+    elicitation. Failures return HTTP 422 with code ELICITATION_CHECK_FAILED. Sonde
+    states accuracy is approximately 80% and recommends no more than 3 retries.
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+pre_live_validation:
+  required: true
+  docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2915926042/Post+Integration/Pre-Live+Validation
+  note: Sonde runs a post-integration / pre-live validation step with the partner before
+    production keys are issued.
+time_simulation: false
+fixture_tooling: false
+demo_apps:
+- name: Sonde Mental Fitness (iOS)
+  url: https://apps.apple.com/us/app/sonde-mental-fitness/id1557473269
+  note: Reference implementation Sonde points integrators at.
+- name: Android/iOS Passive Demo App
+  docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/3303735313/Demo+App+Capabilities

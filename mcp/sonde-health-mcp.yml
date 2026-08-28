@@ -1,0 +1,105 @@
+generated: '2026-08-28'
+method: derived
+source: openapi/sonde-health-screening-api-openapi.yaml + Sonde published endpoint surface
+status: candidate
+summary: >-
+  Sonde Health ships no MCP server. Nothing is published on sondehealth.com, in either
+  Confluence documentation space, or in the sondehealth-samples GitHub organization, and
+  no MCP endpoint answered on any Sonde host. The tools below are a CANDIDATE mapping
+  derived from Sonde's own published REST surface so the shape of an agent integration
+  is on record — they are not offered by Sonde and no endpoint exists to call them.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+discovery:
+  probes:
+  - url: https://api.sondeservices.com/
+    status: 403
+    detail: '{"message":"Missing Authentication Token"} — API Gateway catch-all, no MCP surface.'
+  - url: https://www.sondehealth.com/.well-known/ai-plugin.json
+    status: 404
+  - url: https://api.sondeservices.com/.well-known/oauth-protected-resource
+    status: 403
+  github_org: https://github.com/sondehealth-samples
+  github_repos_found: 2
+  github_mcp_repos_found: 0
+candidate_tools:
+- name: get_access_token
+  description: Exchange partner client credentials for a scoped Sonde access token.
+  rest: POST /platform/v1/oauth2/token
+  scopes: [any]
+- name: register_subject
+  description: Register an end user (subject) with the Sonde platform, including device
+    metadata and optional partner userIdentifier.
+  rest: POST /platform/v2/users
+  scopes: [sonde-platform/users.write]
+- name: list_measures
+  description: List the health-check measures the caller is permitted to use.
+  rest: GET /platform/v1/measures/name/{measureName}
+  scopes: [sonde-platform/measures.list, sonde-platform/measures.read]
+- name: create_upload_url
+  description: Request a signed S3 URL for a WAV voice sample, scoped to the end user's
+    country.
+  rest: POST /platform/v1/storage/files
+  scopes: [sonde-platform/storage.write]
+- name: score_measure
+  description: Score a stored voice sample against a measure (synchronous v1 inference).
+  rest: POST /platform/v1/inference/scores
+  scopes: [sonde-platform/scores.write]
+- name: create_inference_parameters
+  description: Create an inference parameter set for a two-sample v2 inference.
+  rest: POST /platform/v2/inference/inference-parameters
+  scopes: [sonde-platform/scores.write]
+- name: create_score_v2
+  description: Create a v2 inference job.
+  rest: POST /platform/v2/inference/scores
+  scopes: [sonde-platform/scores.write]
+- name: get_score_v2
+  description: Fetch a v2 inference score by id.
+  rest: GET /platform/v2/inference/scores/{scoreId}
+  scopes: [sonde-platform/scores.write]
+- name: create_voice_feature_job
+  description: Create an asynchronous Mental Fitness voice-feature scoring job.
+  rest: POST /platform/async/v1/inference/voice-feature-scores
+  scopes: [sonde-platform/voice-feature-scores.write]
+- name: get_voice_feature_job
+  description: Poll an asynchronous voice-feature scoring job for its acoustic and
+    aggregate scores.
+  rest: GET /platform/async/v1/inference/voice-feature-scores/{asyncJobId}
+  scopes: [sonde-platform/voice-feature-scores.read]
+- name: create_transcription_job
+  description: Create a speech-to-text job over a stored audio file (English only).
+  rest: POST /platform/async/v1/transcriptions
+  scopes: [sonde-platform/transcriptions.write]
+- name: get_transcription_job
+  description: Poll a transcription job for its transcript.
+  rest: GET /platform/async/v1/transcriptions/{asyncJobId}
+  scopes: [sonde-platform/transcriptions.read]
+- name: get_questionnaire
+  description: Retrieve a questionnaire by id in a given language.
+  rest: GET /platform/v1/questionnaires/{questionnaireId}
+  scopes: [sonde-platform/questionnaires.read]
+- name: submit_questionnaire_responses
+  description: Submit a subject's questionnaire answers.
+  rest: POST /platform/v1/questionnaire-responses
+  scopes: [sonde-platform/questionnaire-responses.write]
+- name: list_screening_results
+  description: List paged, filterable screening-session PASS/FAIL outcomes.
+  rest: GET /platform/api/v1/screening-results
+  scopes: [sonde-platform/reports.read, sonde-platform/screening-results.list]
+  source: openapi/sonde-health-screening-api-openapi.yaml
+agent_caveats:
+- >-
+  Every tool above requires partner credentials issued by Sonde under contract; there is
+  no self-service key, so an agent cannot onboard itself.
+- >-
+  The inputs are audio files that must satisfy a strict elicitation (a held 6-second
+  "ahh", or 30 seconds of free speech). An agent cannot synthesise a valid sample — a
+  human has to speak.
+- >-
+  Audio is PHI under Sonde's own HIPAA framing and must not leave the end user's country;
+  countryCode is required at upload.

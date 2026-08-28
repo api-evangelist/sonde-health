@@ -1,0 +1,68 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+flow: clientCredentials
+token_url: https://api.sondeservices.com/platform/v1/oauth2/token
+allocation: >-
+  "As per your contract, SondeHealth will allocate authentication scopes to you." Scopes
+  are granted at onboarding; a partner cannot self-grant.
+scope_count: 17
+scopes:
+- name: sonde-platform/users.write
+  description: Permission to create subjects in UserService.
+  service: UserService
+- name: sonde-platform/storage.write
+  description: Permission to upload wav files to StorageService.
+  service: StorageService
+- name: sonde-platform/storage.read
+  description: Permission to download uploaded files.
+  service: StorageService
+- name: sonde-platform/scores.write
+  description: Permission to calculate a score from InferenceService.
+  service: InferenceService
+- name: sonde-platform/voice-feature-scores.write
+  description: Permission to create a job to infer voice-feature scores for a measure.
+  service: InferenceService
+- name: sonde-platform/voice-feature-scores.read
+  description: Permission to pull a voice-feature job and to get the voice-feature-scores.
+  service: InferenceService
+- name: sonde-platform/measures.read
+  description: Permission to read the particular measures permitted to you from MeasureService.
+  service: MeasureService
+- name: sonde-platform/measures.list
+  description: Permission to list the measures permitted to you from MeasureService.
+  service: MeasureService
+- name: sonde-platform/questionnaires.read
+  description: Permission to read questionnaire.
+  service: QuestionnaireManager
+- name: sonde-platform/questionnaires.write
+  description: Permission to create a questionnaire.
+  service: QuestionnaireManager
+  note: Observed in the Partner Questionnaire Creation use case.
+- name: sonde-platform/questionnaire.write
+  description: Singular variant of the questionnaire-write scope observed in the questionnaire
+    creation docs alongside the plural form.
+  service: QuestionnaireManager
+  note: Both spellings appear in Sonde's published curl examples; recorded verbatim
+    rather than normalised.
+- name: sonde-platform/questionnaire-responses.write
+  description: Permission to submit responses of questionnaire.
+  service: QuestionnaireManager
+- name: sonde-platform/questionnaire-responses.read
+  description: Permission to read submitted questionnaire responses.
+  service: QuestionnaireManager
+- name: sonde-platform/transcriptions.write
+  description: Permission to create a transcribe job.
+  service: TranscriptionService
+- name: sonde-platform/transcriptions.read
+  description: Permission to poll (or read) a transcribe job (or transcript).
+  service: TranscriptionService
+- name: sonde-platform/reports.read
+  description: Read screening-result reports.
+  service: ScreeningReports
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- name: sonde-platform/screening-results.list
+  description: List screening results.
+  service: ScreeningReports
+  source: openapi/sonde-health-screening-api-openapi.yaml

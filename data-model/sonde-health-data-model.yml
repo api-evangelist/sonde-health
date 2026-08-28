@@ -1,0 +1,163 @@
+generated: '2026-08-28'
+method: derived
+source: openapi/sonde-health-screening-api-openapi.yaml
+enriched_from:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+id_conventions:
+  opaque: true
+  max_length: 40
+  prefixes:
+  - prefix: msr_
+    entity: Measure
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+  - prefix: qnr_
+    entity: Questionnaire
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/3043164216/Partner+Questionnaire+Creation
+  note: >-
+    Sonde treats ID prefixes as non-contractual — "Changing the length or format of
+    opaque strings ... This includes adding or removing fixed prefixes (such as msr_ on
+    measure ID)" is listed as a backwards-compatible change. Do not parse them.
+entities:
+- name: Organization
+  service: platform
+  description: The partner tenant a credential belongs to. Screening results are scoped
+    to it; cross-organization reads return FORBIDDEN_ACCESS.
+  in_spec: implied
+- name: Subject
+  aliases: [user]
+  service: UserService
+  description: An end user registered with Sonde. Carries yearOfBirth, gender, device
+    metadata (mandatory from POST /platform/v2/users) and an optional partner-supplied
+    userIdentifier for mapping back to the partner's own records.
+  in_spec: true
+  spec_schema: user
+- name: Token
+  service: platform
+  description: Names the session under which a screening/measure run was performed.
+  in_spec: true
+  spec_schema: token
+- name: Measure
+  service: MeasureService
+  description: A named health check with versioned variants — mental-fitness (v1/v2/v3),
+    respiratory symptoms risk (v1/V2), m3.
+  in_spec: false
+  lookup: GET /platform/v1/measures/name/{measureName}?variant={variant}
+- name: AudioFile
+  service: StorageService
+  description: A WAV voice sample uploaded to a signed S3 URL. Country-scoped — the
+    countryCode supplied at signed-URL request time pins the storage region.
+  in_spec: false
+- name: InferenceJob
+  service: InferenceService
+  description: Asynchronous job that turns one or two audio samples into a score.
+    Created then polled.
+  in_spec: false
+- name: Score
+  service: InferenceService
+  description: The measure outcome. Respiratory Symptoms Risk returns a single 0-100
+    value; Mental Fitness returns per-feature voice-feature scores plus an aggregate.
+  in_spec: false
+- name: VoiceFeatureScore
+  service: InferenceService
+  description: Per-acoustic-feature score — Smoothness, Control, Liveliness, Energy
+    Range, Clarity, Crispness, Speech Rate, Pause Duration.
+  in_spec: false
+- name: TranscriptionJob
+  service: TranscriptionService
+  description: Asynchronous speech-to-text job over a stored audio file (English only).
+  in_spec: false
+- name: Questionnaire
+  service: QuestionnaireManager
+  description: A partner or Sonde-authored questionnaire (M3, PHQ-2) retrievable by id
+    and language.
+  in_spec: false
+- name: QuestionnaireResponse
+  service: QuestionnaireManager
+  description: A subject's submitted answers, scoreable through the inference surface.
+  in_spec: false
+- name: ScreeningResult
+  service: ScreeningReports
+  description: A PASS/FAIL session outcome with its token, subject and calculation
+    timestamp.
+  in_spec: true
+  spec_schema: screening_result
+- name: ScreeningResultPage
+  service: ScreeningReports
+  description: Paged envelope over screening results with requestId, numberOfRecords
+    and numberOfPages.
+  in_spec: true
+  spec_schema: screening_result_response
+relationships:
+- from: Organization
+  to: Subject
+  type: has_many
+  via: credential scope
+  confidence: high
+- from: Subject
+  to: AudioFile
+  type: has_many
+  via: userIdentifier
+  confidence: high
+- from: AudioFile
+  to: InferenceJob
+  type: has_many
+  via: fileLocation
+  confidence: high
+- from: InferenceJob
+  to: Score
+  type: has_one
+  via: scoreId
+  confidence: high
+- from: Score
+  to: VoiceFeatureScore
+  type: has_many
+  via: voiceFeatureScoreId
+  confidence: high
+- from: Measure
+  to: Score
+  type: has_many
+  via: measureName + variant
+  confidence: high
+- from: AudioFile
+  to: TranscriptionJob
+  type: has_one
+  via: filePath
+  confidence: high
+- from: Questionnaire
+  to: QuestionnaireResponse
+  type: has_many
+  via: questionnaireId
+  confidence: high
+- from: Subject
+  to: QuestionnaireResponse
+  type: has_many
+  via: userIdentifier
+  confidence: medium
+- from: ScreeningResult
+  to: Token
+  type: has_one
+  via: token
+  confidence: high
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- from: ScreeningResult
+  to: Subject
+  type: has_one
+  via: user
+  confidence: high
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- from: ScreeningResultPage
+  to: ScreeningResult
+  type: has_many
+  via: screeningResults[]
+  confidence: high
+  source: openapi/sonde-health-screening-api-openapi.yaml
+coverage:
+  entities_in_published_spec: 5
+  entities_total: 13
+  note: >-
+    Only the Screening API has a published machine-readable contract. The other eight
+    entities are derived from Sonde's documented endpoint surface, scope names and
+    release notes — real, but not schema-backed. The Platform Service API's own OpenAPI
+    is embedded in a Confluence macro pointing at an S3 object that no longer exists
+    (see x-coverage in apis.yml), so those schemas cannot be read.

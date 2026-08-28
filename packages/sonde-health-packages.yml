@@ -1,0 +1,104 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2705031191/Sonde+Server+SDK
+registries_checked:
+- registry: maven-central
+  query: 'g:com.sondehealth'
+  url: https://search.maven.org/solrsearch/select?q=g:com.sondehealth
+  result: 0 artifacts — Sonde does not publish to Maven Central
+- registry: npm
+  queries:
+  - sondehealth
+  - sonde-health
+  result: 404 on both. The npm package `sonde` exists but is unrelated third-party work
+    (maintainer str1z, repo github.com/STR1Z/sonde) and is NOT Sonde Health's.
+- registry: pypi
+  result: no first-party package found
+- registry: rubygems
+  result: no first-party package found
+- registry: nuget
+  result: no first-party package found
+- registry: crates.io
+  result: no first-party package found
+- registry: pkg.go.dev
+  result: no first-party package found
+package_count: 1
+packages:
+- name: com.sondehealth:sondehealth-java
+  language: java
+  official: true
+  registry: maven
+  registry_type: vendor-hosted
+  repository_url: http://sondehealth-mvn-central.s3-website.ap-south-1.amazonaws.com/release
+  metadata_url: http://sondehealth-mvn-central.s3-website.ap-south-1.amazonaws.com/release/com/sondehealth/sondehealth-java/maven-metadata.xml
+  version: 1.0.0
+  published: '2020-08-03'
+  probe:
+    fetched: '2026-08-28'
+    http_status: 200
+    detail: >-
+      maven-metadata.xml returned release 1.0.0, versions [1.0.0], lastUpdated
+      20200803120232. Directory listing on the same repo returns 403 AccessDenied, so
+      only the metadata file is publicly readable.
+  docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2705031191/Sonde+Server+SDK
+  note: >-
+    Sonde's own SDK page says "SDK is not updated frequently. Please use direct REST API
+    for your integration." The registry metadata confirms it: one version, published
+    2020-08-03, six years before this probe and predating every API release from 3.0
+    (May 2021) onward — so the SDK cannot cover TranscriptionService, the async
+    voice-feature-score endpoints, inference v2, or questionnaire creation. It is also
+    served only from a vendor S3 Maven repo, not Maven Central, so nothing resolves it
+    by default.
+mobile_sdks:
+  note: >-
+    Sonde's Android and iOS SDKs (Passive, Cued, Edge) are the primary integration path
+    and are documented in detail, but they are distributed to partners under contract
+    rather than published to a public package registry. No public Maven coordinate,
+    CocoaPods pod, or Swift Package URL is published, so there is no registry metadata
+    endpoint to read a version or date from.
+  version: null
+  published: null
+  families:
+  - name: Sonde Passive SDK
+    platforms: [android, ios]
+    docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/3177709660/Getting+Started%3A+Sonde+Passive+SDK
+    capabilities: [mental-fitness, cognitive-fitness, respiratory, enrollment, voice-verification]
+  - name: Sonde Cued SDK
+    platforms: [android, ios]
+    docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2726330374
+    capabilities: [mental-fitness, respiratory]
+  - name: Sonde Edge SDK
+    platforms: [android, ios]
+    docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2799599634/Getting+Started%3A+Sonde+Edge+SDK+%28Android+and+iOS%29
+    capabilities: [mental-fitness, respiratory, on-device-inference]
+sample_code:
+  github_org: https://github.com/sondehealth-samples
+  repositories:
+  - name: sondehealth-samples/score
+    language: Java
+    last_pushed: '2020-08-03'
+    archived: false
+    url: https://github.com/sondehealth-samples/score
+  - name: sondehealth-samples/android-sdk-edge
+    last_pushed: '2021-04-22'
+    archived: false
+    url: https://github.com/sondehealth-samples/android-sdk-edge
+  note: >-
+    Both public sample repositories are dormant — last pushes 2020-08-03 and 2021-04-22.
+    They are samples, not distributable client libraries, so they are not counted in
+    package_count.
+apps:
+  note: First-party end-user apps, listed for completeness — not SDKs.
+  entries:
+  - name: Sonde Mental Fitness
+    platform: ios
+    seller: Sonde Health Inc.
+    version: '3.21'
+    published: '2026-01-09'
+    url: https://apps.apple.com/us/app/sonde-mental-fitness/id1557473269
+  - name: Sonde One
+    platform: ios
+    seller: Sonde Health Inc.
+    version: 8.2.3
+    published: '2023-06-07'
+    url: https://apps.apple.com/us/app/sonde-one/id1147192738

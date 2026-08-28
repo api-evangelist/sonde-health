@@ -1,0 +1,116 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+docs:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+versioning:
+  policy_published: true
+  style: path-segment (/platform/v1, /platform/v2, /platform/async/v1) plus a per-measure
+    `variant` query parameter
+  compatibility_contract:
+    published: true
+    url: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+    backwards_compatible:
+    - Adding new API resources
+    - Adding new optional request parameters to existing API methods
+    - Adding new properties to existing API responses
+    - Changing the order of properties in existing API responses
+    - Changing the length or format of opaque strings such as resource IDs and error
+      messages, including adding or removing fixed prefixes
+    id_length_guarantee: Resource IDs never exceed 40 characters.
+deprecation:
+  policy_published: true
+  policy_style: prose notices on the affected documentation page and in the release notes
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    Sonde announces deprecations in prose — a banner on the measure's documentation page
+    and a note in the release notes — and does not emit RFC 8594 Sunset/Deprecation
+    response headers. No notice period is stated for any of the deprecations below.
+  deprecated:
+  - item: POST /platform/v1/users
+    kind: operation
+    replacement: POST /platform/v2/users
+    announced_in: API Release Notes (April 5th release date)
+    reason: >-
+      "Sonde will release API 2.7 version (POST /platform/v2/users), where 'device'
+      related metadata/attributes will be mandatory."
+    sunset_date: not stated
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+  - item: Respiratory Symptoms Risk (v1)
+    kind: measure
+    status: deprecated
+    replacement: Respiratory Symptoms Risk (variant V2)
+    statement: '"This measure is deprecated. It is recommended to integrate Respiratory
+      Symptoms Risk (variant: V2)"'
+    sunset_date: not stated
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2705031260/Respiratory+Symptoms+Risk+API
+  - item: Depressive Symptoms Risk API
+    kind: measure
+    status: disabled
+    replacement: Mental Fitness Voice Features
+    statement: '"will be disabled and not supported next quarter; please refer to Mental
+      Fitness Voice Features"'
+    sunset_date: not stated
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706472967
+  - item: Sonde Server SDK (Java)
+    kind: sdk
+    status: discouraged
+    statement: '"SDK is not updated frequently. Please use direct REST API for your
+      integration"'
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2705031191/Sonde+Server+SDK
+status_page:
+  advertised: true
+  url: https://status.sondeservices.com
+  reachable: false
+  probe:
+    fetched: '2026-08-28'
+    url: https://status.sondeservices.com
+    http_status: '<no response>'
+    detail: >-
+      Connection timed out after 15s on both https:// and http://. The hostname resolves
+      (146.190.1.228) but nothing answers on either port. Sonde's own support page links
+      this URL as "Services Health", so this is an advertised-but-dead status page.
+  note: >-
+    Because the advertised status page does not answer, NO StatusPage pointer is emitted
+    in apis.yml. Recording the probe rather than the claim.
+sla:
+  published: false
+  note: No public SLA or uptime commitment is published; terms are contractual per partner.
+support:
+  channel: email
+  contact: support@sondehealth.com
+  url: https://www.sondehealth.com/support
+data_deletion:
+  self_service: false
+  process: >-
+    Voice-sample and journal deletion is requested by emailing support@sondehealth.com
+    with the user identifier and the specific deletion request. Sonde can delete for one
+    user or a group, and can selectively delete sessions (e.g. a past-week date range or
+    the last 4 journals).
+  retention_window: not stated
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706898949/Journaling+API
+contract_availability:
+  published_spec_reachable: partial
+  detail: >-
+    Sonde's Platform Service API "REST API Reference" page carries a Confluence open-api
+    macro whose url parameter points at
+    https://sonde-partner-api.s3.ap-south-1.amazonaws.com/stage/api-platform-doc.yaml.
+    That object returns HTTP 404 with S3 error code NoSuchBucket — the bucket Sonde
+    served its own OpenAPI from has been deleted — so the reference page renders an empty
+    spec viewer and the platform contract is effectively unpublished. The Screening API
+    spec survived only because it is embedded INLINE in its macro body rather than
+    linked; that document is captured verbatim in
+    openapi/sonde-health-screening-api-openapi.yaml. Republishing the platform spec is
+    the single highest-value fix available to Sonde.
+  evidence:
+  - url: https://sonde-partner-api.s3.ap-south-1.amazonaws.com/stage/api-platform-doc.yaml
+    status: 404
+    body: '<Error><Code>NoSuchBucket</Code>...<BucketName>sonde-partner-api</BucketName></Error>'
+  - url: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2689105939/REST+API+Reference
+    status: 200
+  - url: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+    status: 200
+  checked: '2026-08-28'

@@ -1,0 +1,68 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Sonde Screening API
+  version: 1.0.0
+extends: ../openapi/sonde-health-screening-api-openapi.yaml
+x-generated: '2026-08-28'
+x-method: generated
+x-source: >-
+  Derived from the verbatim spec Sonde publishes in the open-api macro on
+  https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference,
+  plus Sonde's own documented base host and support contact. The original spec is never
+  mutated; every addition below is an API Evangelist enhancement, not a Sonde statement.
+actions:
+- target: $.info
+  description: >-
+    Add the contact and the terms Sonde publishes on its own site, and note the
+    provenance of the document.
+  update:
+    contact:
+      name: Sonde Health Support
+      email: support@sondehealth.com
+      url: https://www.sondehealth.com/support
+    termsOfService: https://www.sondehealth.com/terms-of-service
+    x-documentation: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+- target: $
+  description: >-
+    The published document declares no servers[]. Sonde's documentation names
+    api.sondeservices.com as the API domain for every use case, so the production host
+    is recorded here rather than in the original file.
+  update:
+    servers:
+    - url: https://api.sondeservices.com
+      description: >-
+        Sonde Platform production. Named as "domain - api.sondeservices.com" throughout
+        Sonde's use-case documentation.
+- target: $.paths['/platform/api/v1/oauth2/token'].post
+  description: Add a stable operationId and a summary — the published document has neither.
+  update:
+    operationId: createScreeningAccessToken
+    summary: Exchange client credentials for a scoped access token
+- target: $.paths['/platform/api/v1/screening-results'].get
+  description: Add a stable operationId, a summary and a tag so the operation groups
+    with the rest of the screening surface.
+  update:
+    operationId: listScreeningResults
+    summary: List paged screening-session outcomes
+    tags:
+    - Screening
+- target: $.components.securitySchemes.OAuth2
+  description: >-
+    The published scheme is typed `apiKey` while the documented mechanism is OAuth 2.0
+    client-credentials via Amazon Cognito. Record the real flow as an extension without
+    changing the declared type.
+  update:
+    x-oauth2-flow: clientCredentials
+    x-token-url: https://api.sondeservices.com/platform/api/v1/oauth2/token
+    x-token-lifetime-seconds: 3600
+    x-scopes-artifact: scopes/sonde-health-scopes.yml
+- target: $
+  description: Cross-link the derived artifacts in this repository.
+  update:
+    x-api-evangelist:
+      errors: errors/sonde-health-problem-types.yml
+      conventions: conventions/sonde-health-conventions.yml
+      authentication: authentication/sonde-health-authentication.yml
+      scopes: scopes/sonde-health-scopes.yml
+      data_model: data-model/sonde-health-data-model.yml
+      lifecycle: lifecycle/sonde-health-lifecycle.yml

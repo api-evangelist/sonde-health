@@ -1,0 +1,95 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
+docs:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
+- https://www.sondehealth.com/privacy
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706833413
+entries:
+- id: oauth2
+  conforms: true
+  evidence: >-
+    OAuth 2.0 client_credentials grant with Basic client authentication against
+    https://api.sondeservices.com/platform/v1/oauth2/token; Bearer access token,
+    expires_in 3600. Scope strings are namespaced sonde-platform/<resource>.<verb>.
+  source: authentication/sonde-health-authentication.yml
+- id: oidc
+  conforms: false
+  evidence: >-
+    No OpenID Connect surface. /.well-known/openid-configuration returns 404 on
+    sondehealth.com and 403 on api.sondeservices.com; the docs describe machine-to-machine
+    client credentials only, with no end-user login or ID token.
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    Errors use a vendor JSON envelope ({code, message, requestId, invalidFields[]}), not
+    application/problem+json. See errors/sonde-health-problem-types.yml.
+- id: pagination
+  conforms: true
+  evidence: >-
+    Page-index pagination on GET /platform/api/v1/screening-results — pageIndex query
+    parameter, numberOfRecords / numberOfPages in the response.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No idempotency key, header, or retry-safety statement is published for any of the
+    POST endpoints.
+- id: hipaa
+  conforms: claimed
+  evidence: >-
+    "Sonde's platform is HIPAA compliant" — Sonde API Platform Introduction. The docs
+    also apply HIPAA operationally: "As per HIPAA audio file is considered as PII and
+    hence the audio file should not leave the country of end-user", enforced by a
+    required countryCode when requesting a signed storage URL, with a published list of
+    supported PII/PHI storage regions.
+  attestation_published: false
+  note: >-
+    Recorded as `claimed`, not `verified`. Sonde publishes the claim in prose; it does
+    not publish a SOC 2 report, an HITRUST or ISO 27001 certificate, a trust center, or
+    any third-party attestation. probe-security-programs.py found no trust center and no
+    vulnerability-disclosure program.
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
+- id: fhir
+  conforms: false
+  evidence: >-
+    No FHIR surface. A full-text sweep of all 70 published pages in Sonde's two
+    Confluence documentation spaces returned zero mentions of FHIR, SMART on FHIR,
+    US Core, USCDI, HL7 v2, C-CDA, CDS Hooks or DICOM. Sonde's payloads are proprietary
+    JSON (screening_result, voice-feature scores, questionnaire responses).
+domain_standard:
+  sector: health
+  regime: health
+  regime_standards_checked:
+  - fhir
+  - smart-on-fhir
+  - us-core
+  - uscdi
+  - da-vinci
+  - carin-blue-button
+  - fhir-bulk-data
+  - cds-hooks
+  - c-cda
+  - hl7-v2
+  - dicom
+  declared: false
+  evidence: >-
+    None of the eleven health-regime standards appears anywhere in the contract or in
+    any of the 70 published documentation pages. Sonde's Health Check scores are a
+    novel measurement class (vocal biomarkers) with no established interchange standard,
+    and the product ships to wellness/employer/OEM partners rather than into EHR
+    workflows — so there is no bilateral-connector gap being dodged here. Recorded as
+    an honest not-declared, not as a failure.
+  note: >-
+    The nearest actionable standard for this product would be FHIR Observation resources
+    for the score payloads. Worth raising with the provider; NOT asserted here.
+certifications:
+  published: []
+  note: >-
+    No SOC 2, ISO 27001, HITRUST, PCI DSS or FedRAMP certification is published on
+    sondehealth.com or in the documentation. The only compliance statement is the HIPAA
+    claim above.
+regulatory_context:
+- HIPAA (US) — claimed compliant; drives the country-scoped audio residency rule.
+- FDA — Sonde's measures are positioned as wellness/fitness indicators, not diagnostics.
+  The docs state "Confirmation requires evaluation by a medical professional."

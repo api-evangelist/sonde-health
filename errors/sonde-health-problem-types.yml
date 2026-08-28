@@ -1,0 +1,104 @@
+generated: '2026-08-28'
+method: derived
+source: openapi/sonde-health-screening-api-openapi.yaml
+enriched_from:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+- https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+format: vendor-json
+rfc9457: false
+note: >-
+  Sonde does not publish RFC 9457 problem+json. It uses a vendor JSON envelope keyed
+  on a machine-readable `code` plus a `requestId` correlation identifier that Sonde
+  support asks for when debugging. Validation failures carry field-level detail.
+envelope:
+  media_type: application/json
+  fields:
+  - name: code
+    description: Machine-readable error code (SCREAMING_SNAKE_CASE).
+    required: true
+  - name: message
+    description: Human-readable error message.
+    required: false
+  - name: requestId
+    description: Request identifier to quote in a support request.
+    required: true
+  - name: missingFields
+    description: Array of {fieldName, message} for absent required fields.
+  - name: invalidFields
+    description: Array of {fieldName, message} for malformed fields.
+  - name: invalidCombinationFields
+    description: Array of {message, fields[{name,value}]} for mutually invalid field
+      combinations.
+  - name: users
+    description: Array of user identifiers that could not be resolved (not-found responses).
+problem_type_count: 6
+problem_types:
+- code: INVALID_REQUEST
+  status: 400
+  title: Request validation failed
+  detail: One or more request fields are missing, malformed, or form an invalid combination.
+  remediation: Read missingFields / invalidFields / invalidCombinationFields and correct
+    the request. Date-time values must be ISO-8601 UTC.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- code: FORBIDDEN_ACCESS
+  status: 403
+  title: Access forbidden
+  detail: The caller attempted to fetch screening result data for users who are not
+    part of their organization.
+  remediation: Restrict the query to subjects registered under your own organization,
+    and confirm the token carries the required scope.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- code: USER_NOT_FOUND
+  status: 404
+  title: User not found
+  detail: The user identifier supplied in the request does not exist on the Sonde platform.
+  remediation: Register the subject with UserService before querying, or correct the
+    userIdentifier.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- code: ORGANIZATION_NOT_FOUND
+  status: 404
+  title: Organization not found
+  detail: The organization bound to the credential could not be resolved.
+  remediation: Contact support@sondehealth.com — this indicates an onboarding/credential
+    problem rather than a request problem.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- code: PAGE_INDEX_OUT_OF_BOUND
+  status: 500
+  title: Page index out of bound
+  detail: The data indexed by page no is not available.
+  remediation: Read numberOfPages from a prior response and request a pageIndex within
+    range.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+- code: INTERNAL_SERVER_ERROR
+  status: 500
+  title: Internal server error
+  detail: Server side failure.
+  remediation: Retry with backoff; quote the requestId to support@sondehealth.com if
+    it persists.
+  source: openapi/sonde-health-screening-api-openapi.yaml
+platform_api_errors:
+- code: ELICITATION_CHECK_FAILED
+  status: 422
+  title: Elicitation check failed
+  detail: >-
+    The Elicitation Check (ELCK) rejected the voice sample — it failed automatic
+    validation of energy level, voice presence, or the correct requested utterance.
+  remediation: >-
+    Re-prompt the user to record in a quiet place and to perform the specific elicitation
+    the measure requires (a 6-second "Ahhh" for Respiratory Symptoms Risk, 30 seconds
+    of free speech for Mental Fitness).
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+sdk_error_conditions:
+  note: >-
+    The on-device Passive/Edge SDKs surface sample-quality failures through an
+    InferenceCallback rather than an HTTP status.
+  conditions:
+  - Low Speech
+  - High Noise
+  - Low Speech and High Noise
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2799927338/Mental+Fitness+Android+EDGE+Use+Case
+gaps:
+- >-
+  Sonde publishes no consolidated error-code reference page. The codes above are the
+  union of what the Screening API OpenAPI enumerates and what the release notes and
+  use-case pages state. A full registry would need to come from the provider.

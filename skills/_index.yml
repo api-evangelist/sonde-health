@@ -1,0 +1,32 @@
+generated: '2026-08-28'
+method: generated
+source: >-
+  Sonde Health's own published step-by-step use cases in
+  https://sondehealth.atlassian.net/wiki/spaces/SA/ (Respiratory Symptoms Risk API,
+  Mental Fitness Voice Features API, Journaling API) plus the Screening API OpenAPI
+  embedded at https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+provider_published_skills: false
+provider_published_agents_md: false
+grounding_note: >-
+  Sonde publishes operationIds for NEITHER API. The Screening API OpenAPI defines two
+  operations with no operationId, and the Platform Service API has no reachable
+  machine-readable contract (its Confluence macro points at an S3 object that returns 404
+  NoSuchBucket). Every step in these skills is therefore anchored on a METHOD + PATH that
+  appears verbatim in a Sonde curl example or release-note entry, and each skill names
+  the exact documentation page it came from. No operationId, parameter, header, scope or
+  error code below is invented.
+skill_count: 3
+skills:
+- file: sonde-health-respiratory-symptoms-risk.md
+  name: sonde-health-respiratory-symptoms-risk
+  api: Sonde Platform Service API
+  summary: Score a 6-second held "ahh" voice sample for respiratory symptom risk.
+- file: sonde-health-mental-fitness-voice-features.md
+  name: sonde-health-mental-fitness-voice-features
+  api: Sonde Platform Service API
+  summary: Run an asynchronous Mental Fitness voice-feature scoring job over 30 seconds
+    of free speech.
+- file: sonde-health-screening-results-report.md
+  name: sonde-health-screening-results-report
+  api: Sonde Screening API
+  summary: Pull paged, filtered screening-session PASS/FAIL outcomes for an organization.

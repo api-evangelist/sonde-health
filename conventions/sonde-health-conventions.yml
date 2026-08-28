@@ -1,0 +1,140 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/overview
+docs:
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706931713/Authentication+Scopes
+- https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+- https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+protocol: REST/JSON over HTTPS
+base_url: https://api.sondeservices.com
+authentication:
+  style: oauth2-client-credentials
+  header: 'Authorization: <access_token>'
+  token_lifetime_seconds: 3600
+  ref: authentication/sonde-health-authentication.yml
+versioning:
+  style: path-segment
+  segments:
+  - /platform/v1/
+  - /platform/v2/
+  - /platform/async/v1/
+  - /platform/api/v1/  # Screening API
+  measure_variants: >-
+    Measures additionally carry a `variant` query parameter
+    (e.g. /platform/v1/measures/name/mental-fitness?variant=v3), so a measure can be
+    revised independently of the API path version.
+  backwards_compatible_changes:
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2688450588/API+upgrades
+    considered_compatible:
+    - Adding new API resources
+    - Adding new optional request parameters to existing API methods
+    - Adding new properties to existing API responses
+    - Changing the order of properties in existing API responses
+    - Changing the length or format of opaque strings such as resource IDs and error
+      messages, including adding or removing fixed prefixes (such as msr_ on measure ID)
+    id_contract: >-
+      "You can safely assume resource IDs we generate will never exceed 40 characters" —
+      Sonde advises storing IDs in a VARCHAR(40) COLLATE utf8_bin column.
+pagination:
+  style: page-index
+  request_params:
+  - name: pageIndex
+    in: query
+    description: The page index out of the whole screening data the caller wants to fetch.
+  response_fields:
+  - numberOfRecords
+  - numberOfPages
+  out_of_range_behaviour: 'HTTP 500 with code PAGE_INDEX_OUT_OF_BOUND'
+  source: openapi/sonde-health-screening-api-openapi.yaml
+filtering:
+  screening_results:
+  - userName
+  - from  # ISO-8601 UTC
+  - to    # ISO-8601 UTC
+request_tracing:
+  field: requestId
+  location: response body
+  description: >-
+    Every response (success and error) carries a requestId. Sonde support asks for it
+    when debugging; there is no documented request-id request header.
+error_envelope:
+  ref: errors/sonde-health-problem-types.yml
+  shape: '{ code, message, requestId, [missingFields|invalidFields|invalidCombinationFields|users] }'
+  rfc9457: false
+idempotency:
+  supported: unknown
+  grade: undocumented
+  note: >-
+    Sonde publishes no idempotency key, no Idempotency-Key header, and no retry-safety
+    statement for its POST endpoints (users, storage/files, inference jobs,
+    questionnaire-responses). Callers cannot tell whether re-POSTing a job creates a
+    duplicate. This is a gap to raise with the provider, not an absence we can fill.
+rate_limit_signaling:
+  documented: false
+  ref: rate-limits/sonde-health-rate-limits.yml
+  note: No published limits and no documented X-RateLimit-*/RateLimit-*/Retry-After headers.
+dry_run_mode:
+  supported: false
+  note: >-
+    No dry-run or simulate flag is documented. The nearest equivalent is the Test key
+    issued at onboarding, which exercises the real flow against test credentials.
+    See sandbox/sonde-health-sandbox.yml.
+expansion_sparse_fields:
+  supported: false
+metadata:
+  supported: partial
+  note: >-
+    User registration accepts partner-supplied `userIdentifier` for mapping Sonde data
+    back to the partner's own records, plus device metadata (mandatory from API 2.7 /
+    POST /platform/v2/users) and demographic attributes such as yearOfBirth.
+data_residency:
+  countryCode_required: true
+  note: >-
+    "As per HIPAA audio file is considered as PII and hence the audio file should not
+    leave the country of end-user." A countryCode is supplied when requesting the
+    signed storage URL, and Sonde routes storage to the matching region.
+  source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706833413
+reversibility:
+  grade: documented
+  applicable: true
+  note: >-
+    Sonde's write surface creates subjects, uploads audio, and creates inference and
+    transcription jobs. No self-service reversal operation (cancel/delete/undo) is
+    published for any of them.
+  surfaces:
+  - operation: POST /platform/v2/users
+    write: Registers a subject on the Sonde platform.
+    reversal: none published
+    window: not stated
+  - operation: POST /platform/v1/storage/files
+    write: Requests a signed S3 URL and uploads a WAV voice sample.
+    reversal: >-
+      Deletion of voice samples and/or transcribed journals is available, but only as
+      an out-of-band request — "The request to delete needs to be made by sending an
+      email with the user identifier number and specific deletion request to
+      support@sondehealth.com". Sonde can delete for a specific user or group of users,
+      and can selectively delete sessions (e.g. a past-week date range or the last 4
+      journals).
+    operation_id: null
+    window: not stated
+    docs: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706898949/Journaling+API
+  - operation: POST /platform/v2/inference/scores
+    write: Creates an inference job that produces a score.
+    reversal: none published
+    window: not stated
+  - operation: POST /platform/v1/questionnaire-responses
+    write: Submits questionnaire responses.
+    reversal: none published
+    window: not stated
+  summary: >-
+    A reversal PATH exists for stored audio and journals (email support), so this grades
+    `documented` rather than `na` or absent — but no WINDOW is stated anywhere in the
+    docs, and there is no API operation an agent could call, so it does not reach
+    `verified`. NEVER assume a retention window here; Sonde does not publish one.
+cross_links:
+  errors: errors/sonde-health-problem-types.yml
+  lifecycle: lifecycle/sonde-health-lifecycle.yml
+  authentication: authentication/sonde-health-authentication.yml
+  scopes: scopes/sonde-health-scopes.yml
+  rate_limits: rate-limits/sonde-health-rate-limits.yml

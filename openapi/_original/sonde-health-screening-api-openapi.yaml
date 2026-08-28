@@ -1,0 +1,432 @@
+openapi: "3.0.0"
+info:
+  title: Sonde Screening API
+  description: Sonde API documentation for Sonde Services
+  version: 1.0.0
+
+components:
+  securitySchemes:
+    OAuth2:
+        in: header
+        type: apiKey
+        name: Authorization
+        x-amazon-apigateway-authtype: cognito_user_pools
+        x-amazon-apigateway-authorizer:
+            type: cognito_user_pools
+            providerARNs:
+                - Ref: CognitoUserPoolARN
+
+  schemas:
+    token:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the token used to perform session
+    
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          description: email of the user.
+    
+    screening_result:
+      type: object
+      properties:
+        calculatedAt:
+          type: string
+          format: date-time
+          description: time at which session is performed Date time in ISO-8601 format.
+        result:
+          type: boolean
+          description: The session outcome PASS or FAIL. PASS - True and FAIL - False
+        token:
+            $ref: '#/components/schemas/token'
+        user:
+          $ref: '#/components/schemas/user'
+
+    screening_result_response:
+      type: object 
+      properties:
+          requestId:
+            type: string
+            description: request identifier for which the error has occurred.
+          numberOfRecords:
+            type: integer
+            description: total no of records for the given input
+          numberOfPages:
+            type: integer
+            description: total no of pages for the given input.(total no of records/page size)
+          screeningResults:
+            type: array
+            items:
+              $ref: '#/components/schemas/screening_result'
+
+    invalid_request:
+      type: object
+      properties:
+          code: 
+            type: string 
+            enum:
+              - INVALID_REQUEST
+          requestId:
+            description: requestId to debug in-case of support request
+            type: string 
+          missingFields:
+            type: array 
+            items:
+              type: object
+              properties:
+                fieldName: 
+                  type: string 
+                message:
+                  type: string 
+          invalidFields:
+            type: array 
+            items:
+              type: object
+              properties:
+                fieldName: 
+                  type: string 
+                message:
+                  type: string
+          invalidCombinationFields:
+            type: array
+            items:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: the combination of fields is invalid.
+                fields:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name: 
+                        type: string
+                      value:
+                        type: string                
+      required:
+          - code
+          - requestId
+    
+    access_forbidden:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+            - FORBIDDEN_ACCESS
+          description: error model for user is not permitted to do an operation.
+        message:
+          type: string
+          description: human readable errror message notifying forbidden access.
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+
+    not_found:
+      type: object
+      properties:
+        code: 
+          type: string
+          enum:
+            - USER_NOT_FOUND
+            - ORGANIZATION_NOT_FOUND
+          description: error code to signify that user in the request not found
+        message:
+          type: string
+          description: human readable message for notifying that user in the request not found.
+        users:
+          type: array
+          items:
+            type: string
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+      required:
+        - code 
+        - message
+        - requestId
+
+    
+    Error:
+      type: object
+      properties: 
+        code:
+          type: string
+          enum:
+            - INTERNAL_SERVER_ERROR
+            - PAGE_INDEX_OUT_OF_BOUND
+          description: error code to signify that something went wrong.
+        message:
+          type: string
+          description: human redable description of the error occurred.
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+      required:
+        - code 
+        - message
+        - requestId
+
+    OauthAccessTokenRequest:
+      properties:
+        grant_type:
+          description: It is fixed value
+          type: string
+          default: client_credentials
+        scope:
+          type: string
+          enum:
+              - sonde-service-admin/reports.read
+          description: Oauth Scope for which the token should be generated
+    
+    OauthAccessTokenResponse:
+      type: object
+      properties:
+        access_token:
+            type: string
+        expires_in:
+            default: 3600
+            type: integer
+        token_type:
+            type: string
+
+paths:
+  /platform/api/v1/oauth2/token:
+    post: 
+      tags:
+        - Authentication
+      parameters:
+        - in: header
+          name: Authorization 
+          schema:
+            type: string 
+          required: true
+          description: The client must pass Basic64Encode(client_id:client_secret) in the authorization header through Basic HTTP authorization.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OauthAccessTokenRequest'
+            example:
+              "grant_type=client_credentials&scope=sonde-platform/screening-results.list"
+      x-amazon-apigateway-integration: # Fake integration. This end-point is directly confiugred from Cloudfront to AWS Cognito 
+        httpMethod: POST
+        type: mock
+      responses:
+        200:
+            description: Access is granted 
+            content:
+              application/json:                            
+                schema:
+                    $ref: '#/components/schemas/OauthAccessTokenResponse'
+        400:
+            description: Request is malformed 
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+
+  /platform/api/v1/screening-results:
+    get:
+      parameters:
+        - in: header
+          name: Authorization 
+          schema:
+            type: string 
+          required: true 
+          description: Access token. Get this token using Authentication end-point
+        - in: query
+          name: pageIndex
+          schema:
+            type: integer
+          required: False
+          description: the page index out of whole screening data user wants to fetch.
+        - in: query
+          name: userName 
+          schema:
+            type: string 
+          required: false 
+          description: user name for whom the measure session outcome data needs to be fetched.
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          required: false 
+          description : UTC time denotinf start of the time frame.
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          required: false 
+          description : UTC time denotinf end of the time frame.
+      security:
+        - OAuth2:
+            - "sonde-platform/reports.read"
+      responses:
+        200:
+          description: Ok 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/screening_result_response'
+              examples:
+                ALL_USER:
+                  value:
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                    numberOfRecords: 1234
+                    numberOfPages: 2
+                    screeningResults:
+                      - token:
+                          name: "token_1"
+                        user:
+                          name: james@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-25T12:12:122Z"
+                      - token:
+                          name: "token_2"
+                        user:
+                          name: noha@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-25T10:12:122Z"
+                      - token:
+                          name: "token_3"
+                        user:
+                          name: william@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-15T12:12:122Z"
+                SPECIFIC_USER:
+                  value:
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                    numberOfRecords: 2
+                    numberOfPages: 1
+                    screeningResults:
+                      - token:
+                          name: "token_1"
+                        user:
+                          name: james@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-25T12:12:122Z"            
+                      - token:
+                          name: "token_2"
+                        user:
+                          name: james@yopmail.com
+                        result: False
+                        calculatedAt: "2020-10-25T12:10:122Z"            
+
+                SPECIFIC_TIME_RANGE:
+                  value:
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                    numberOfRecords: 2
+                    numberOfPages: 1
+                    screeningResults:
+                      - token:
+                          name: "token_1"
+                        user:
+                          name: james@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-25T12:12:122Z"     
+                      - token:
+                          name: "token_2"
+                        user:
+                          name: noha@yopmail.com
+                        result: True
+                        calculatedAt: "2020-10-25T10:12:122Z"                        
+                NO_USER_FOR_FILTER:
+                  value:
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                    numberOfRecords: 0
+                    numberOfPages: 0
+                    screeningResults: []
+                  
+        400:
+          description: Request validation failed Error 
+          content:
+              application/json:
+                  schema:
+                      $ref: '#/components/schemas/invalid_request'   
+                  examples:
+                    INVALID_DATE_FORMAT:
+                      value:
+                        code: "INVALID_REQUEST"
+                        requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                        invalidFields:
+                          - fieldName: "from"
+                            message: "invalid date format"
+                            
+                    MISSING_FIELD:
+                      value:
+                        code: "INVALID_REQUEST"
+                        requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                        invalidFields:
+                          - fieldName: "from"
+                            message: "To and From Date/time needs to be present in the request any of them is present"
+                    INVALID_DATE_RANGE:
+                      value:
+                        code: "INVALID_REQUEST"
+                        requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                        invalidCombinationFields:
+                          - message: "from date/time must be lesser than to date/time."
+                            fields:
+                              - name: "from"
+                                value: "2020-10-12T12:00:00Z"
+                              - name: "to"
+                                value: "2020-10-12T12:00:00Z"
+        
+        422:
+          description: one/more entities in the request not found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/not_found'
+                  - $ref: '#/components/schemas/Error'
+              examples:
+                USER:
+                  value:
+                    code: "USER_NOT_FOUND"
+                    meassage: "Listed users in the request are not available in the system"
+                    users: [
+                      "abc@yopmail.com"
+                    ]
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                ORGANIZATION:
+                  value:
+                    code: ORGANIZATION_NOT_FOUND
+                    message: "Organization for client not found"
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+                PAGE_INDEX_OUT_OF_BOUND:
+                  value:
+                    code: PAGE_INDEX_OUT_OF_BOUND
+                    message: "The data indexed by page no is not available"
+                    requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+        403:
+          description: user is trying to fetch screening result data for users who are not part oh his organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/access_forbidden'
+              example:
+                code: "FORBIDDEN_ACCESS"
+                meassage: "Can not fetch screening result data for users from other organization."
+                requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"
+
+        500:
+          description: Server side failure 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'   
+              example:
+                  code: "INTERNAL_SERVER_ERROR"
+                  message: "Internal Server Error"
+                  requestId: "6afbaff8-1aa8-11eb-adc1-0242ac120002"

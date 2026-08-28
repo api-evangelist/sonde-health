@@ -1,0 +1,40 @@
+generated: '2026-08-28'
+method: searched
+source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+docs_checked:
+- url: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2689105939/REST+API+Reference
+  status: 200
+- url: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+  status: 200
+- url: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+  status: 200
+limit_count: 0
+limits: []
+response_headers: []
+exhaustion_status: null
+note: >-
+  Sonde publishes no rate limits. A full-text sweep of all 70 pages in both public
+  documentation spaces found no quota, no throttling policy, no 429 response, and no
+  X-RateLimit-* / RateLimit-* / Retry-After header documented anywhere. The published
+  OpenAPI declares no 429 response either. An agent calling this API has no runtime
+  signal telling it when to back off — an honest zero, and a gap worth raising with the
+  provider.
+observed:
+  probed: false
+  reason: >-
+    Every Sonde endpoint requires partner credentials issued under contract. An
+    unauthenticated request to https://api.sondeservices.com returns 403
+    {"message":"Missing Authentication Token"} with no rate-limit headers, so no live
+    limit could be observed without credentials we do not have and would not use.
+  evidence:
+  - url: https://api.sondeservices.com/
+    status: 403
+adjacent_guidance:
+  - guidance: >-
+      Sonde recommends asking a user for no more than 3 voice samples when the
+      Elicitation Check keeps failing — a client-side retry ceiling, not a server limit.
+    source: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2706866198/API+Release+Notes+and+Best+Practices
+  - guidance: >-
+      Access tokens expire after 3600 seconds; partner backends must re-fetch. This is
+      the only documented periodic call constraint.
+    source: authentication/sonde-health-authentication.yml
