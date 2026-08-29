@@ -13,6 +13,17 @@ description: 'Sonde Health is a Boston-based digital health company that turns s
   Respiratory Symptoms Risk, Mental Fitness voice-feature scores, M3/PHQ-2 questionnaire
   scores, or an English transcription.'
 url: https://raw.githubusercontent.com/api-evangelist/sonde-health/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: http://static1.squarespace.com/static/5daafd349a9f9f7b4aa8680f/t/5df3f83d91da223324d2f090/1587518087705/Sonde_Logo+horizontal+PMS3025.png?format=1500w
 x-type: company
 x-source: harvest:secondary-market
