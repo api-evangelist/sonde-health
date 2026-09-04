@@ -24,6 +24,23 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: approval
+  trial: false
+  try_now: false
+  public: false
+  label: Requires approval
+  confidence: medium
+  source:
+  - plans
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  - sandbox
+  generated: '2026-09-03'
+  method: derived
 image: http://static1.squarespace.com/static/5daafd349a9f9f7b4aa8680f/t/5df3f83d91da223324d2f090/1587518087705/Sonde_Logo+horizontal+PMS3025.png?format=1500w
 x-type: company
 x-source: harvest:secondary-market
