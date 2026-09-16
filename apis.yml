@@ -1,17 +1,14 @@
 aid: sonde-health
 name: Sonde Health
-description: 'Sonde Health is a Boston-based digital health company that turns short
-  voice samples into vocal biomarkers — objective, AI-derived measures of respiratory,
-  mental and cognitive fitness. Founded out of PureTech Health, Sonde has banked over
-  1,000,000 voice samples from more than 80,000 subjects to train its Health Check
-  models. Partners integrate through the Sonde Platform Service API (a HIPAA-aligned
-  REST API on api.sondeservices.com secured with OAuth 2.0 client-credentials and
-  fine-grained sonde-platform/* scopes), through on-device Passive, Cued and Edge SDKs
-  for Android and iOS, and through OEM integrations such as Qualcomm''s Snapdragon
-  Sound platform. The cloud flow is upload-and-score: register a subject, request a
-  signed storage URL, upload a WAV sample, then create an inference job and poll for
-  Respiratory Symptoms Risk, Mental Fitness voice-feature scores, M3/PHQ-2 questionnaire
-  scores, or an English transcription.'
+description: 'Sonde Health is a Boston-based digital health company that turns short voice samples into
+  vocal biomarkers — objective, AI-derived measures of respiratory, mental and cognitive fitness. Founded
+  out of PureTech Health, Sonde has banked over 1,000,000 voice samples from more than 80,000 subjects
+  to train its Health Check models. Partners integrate through the Sonde Platform Service API (a HIPAA-aligned
+  REST API on api.sondeservices.com secured with OAuth 2.0 client-credentials and fine-grained sonde-platform/*
+  scopes), through on-device Passive, Cued and Edge SDKs for Android and iOS, and through OEM integrations
+  such as Qualcomm''s Snapdragon Sound platform. The cloud flow is upload-and-score: register a subject,
+  request a signed storage URL, upload a WAV sample, then create an inference job and poll for Respiratory
+  Symptoms Risk, Mental Fitness voice-feature scores, M3/PHQ-2 questionnaire scores, or an English transcription.'
 url: https://raw.githubusercontent.com/api-evangelist/sonde-health/refs/heads/main/apis.yml
 deliveryModel:
   model: saas
@@ -46,7 +43,7 @@ x-type: company
 x-source: harvest:secondary-market
 specificationVersion: '0.20'
 created: '2026-08-28'
-modified: '2026-08-28'
+modified: '2026-09-16'
 tags:
 - Company
 - Health
@@ -79,12 +76,11 @@ tags_raw:
 - HIPAA
 apis:
 - name: Sonde Platform Service API
-  description: 'The Sonde Platform Service API lets partners run Sonde Vocal Biomarker
-    Health Checks from their own mobile, web and embedded applications. Services cover
-    user registration (UserService), signed-URL audio upload (StorageService), measure
-    lookup (MeasureService), synchronous and asynchronous inference (InferenceService),
-    speech-to-text (TranscriptionService) and questionnaire delivery/scoring (QuestionnaireManager).
-    Authentication is OAuth 2.0 client-credentials against an Amazon Cognito user pool.'
+  description: The Sonde Platform Service API lets partners run Sonde Vocal Biomarker Health Checks from
+    their own mobile, web and embedded applications. Services cover user registration (UserService), signed-URL
+    audio upload (StorageService), measure lookup (MeasureService), synchronous and asynchronous inference
+    (InferenceService), speech-to-text (TranscriptionService) and questionnaire delivery/scoring (QuestionnaireManager).
+    Authentication is OAuth 2.0 client-credentials against an Amazon Cognito user pool.
   humanURL: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
   baseURL: https://api.sondeservices.com
   tags:
@@ -106,22 +102,28 @@ apis:
     url: scopes/sonde-health-scopes.yml
   - type: ChangeLog
     url: changelog/sonde-health-changelog.yml
-- name: Sonde Screening API
-  description: 'The Sonde Screening API (Sonde Product Partner API) exposes partner
-    screening-session outcomes: an OAuth 2.0 client-credentials token endpoint and
-    a paged, filterable screening-results report listing each session token, subject,
-    PASS/FAIL outcome and calculation timestamp.'
-  humanURL: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+- aid: sonde-health:sonde-health-authentication-api
+  name: Sonde Health Authentication API
+  description: The Authentication API from Sonde Health — 1 operation(s) for authentication.
+  humanURL: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
   baseURL: https://api.sondeservices.com
   tags:
-  - Screening
-  - Reporting
   - Authentication
   properties:
   - type: OpenAPI
-    url: openapi/sonde-health-screening-api-openapi.yaml
-  - type: Overlay
-    url: overlays/sonde-health-screening-api-overlay.yaml
+    url: openapi/sonde-health-authentication-api-openapi.yml
+  - type: APIReference
+    url: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
+- aid: sonde-health:sonde-health-platform-api
+  name: Sonde Health Platform API
+  description: The Platform API from Sonde Health — 1 operation(s) for platform.
+  humanURL: https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2707062806/Sonde+API+Platform+Introduction
+  baseURL: https://api.sondeservices.com
+  tags:
+  - Platform
+  properties:
+  - type: OpenAPI
+    url: openapi/sonde-health-platform-api-openapi.yml
   - type: APIReference
     url: https://sondehealth.atlassian.net/wiki/spaces/SPPA/pages/1614250108/REST+API+Reference
 maintainers:
@@ -155,7 +157,7 @@ common:
 - type: PrivacyPolicy
   url: https://www.sondehealth.com/privacy
 - type: OpenAPI
-  url: openapi/sonde-health-screening-api-openapi.yaml
+  url: openapi/_original/sonde-health-screening-api-openapi.yaml
 - type: Overlay
   url: overlays/sonde-health-screening-api-overlay.yaml
 - type: Authentication
