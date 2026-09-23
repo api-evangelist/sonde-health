@@ -1,0 +1,25 @@
+{
+  "provider": "sonde-health",
+  "sources": [
+    "_original/sonde-health-screening-api-openapi.yaml"
+  ],
+  "outputs": [
+    "sonde-health-authentication-api-openapi.yml",
+    "sonde-health-platform-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "sonde-health-screening-api-openapi.yaml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "sonde-health-screening-api-openapi.yaml: tagged paths GET /platform/api/v1/screening-results -> Platform",
+    "sonde-health-screening-api-openapi.yaml: declared missing tag: Authentication",
+    "sonde-health-screening-api-openapi.yaml: declared missing tag: Platform",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "sonde-health-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "sonde-health-platform-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

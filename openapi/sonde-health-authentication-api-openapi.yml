@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: Sonde Screening Authentication API
+  description: Sonde API documentation for Sonde Services
+  version: 1.0.0
+tags:
+- name: Authentication
+paths:
+  /platform/api/v1/oauth2/token:
+    post:
+      tags:
+      - Authentication
+      parameters:
+      - in: header
+        name: Authorization
+        schema:
+          type: string
+        required: true
+        description: The client must pass Basic64Encode(client_id:client_secret) in the authorization header through Basic HTTP authorization.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OauthAccessTokenRequest'
+            example: grant_type=client_credentials&scope=sonde-platform/screening-results.list
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        type: mock
+      responses:
+        200:
+          description: Access is granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OauthAccessTokenResponse'
+        400:
+          description: Request is malformed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      summary: Create platform api oauth2 token
+      x-summary-source: derived
+      operationId: postPlatformApiV1Oauth2Token
+      x-operation-id-source: derived
+components:
+  schemas:
+    OauthAccessTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          default: 3600
+          type: integer
+        token_type:
+          type: string
+    OauthAccessTokenRequest:
+      properties:
+        grant_type:
+          description: It is fixed value
+          type: string
+          default: client_credentials
+        scope:
+          type: string
+          enum:
+          - sonde-service-admin/reports.read
+          description: Oauth Scope for which the token should be generated
+  securitySchemes:
+    OAuth2:
+      in: header
+      type: apiKey
+      name: Authorization
+      x-amazon-apigateway-authtype: cognito_user_pools
+      x-amazon-apigateway-authorizer:
+        type: cognito_user_pools
+        providerARNs:
+        - Ref: CognitoUserPoolARN
