@@ -48,16 +48,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    OauthAccessTokenResponse:
-      type: object
-      properties:
-        access_token:
-          type: string
-        expires_in:
-          default: 3600
-          type: integer
-        token_type:
-          type: string
     OauthAccessTokenRequest:
       properties:
         grant_type:
@@ -69,6 +59,16 @@ components:
           enum:
           - sonde-service-admin/reports.read
           description: Oauth Scope for which the token should be generated
+    OauthAccessTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          default: 3600
+          type: integer
+        token_type:
+          type: string
   securitySchemes:
     OAuth2:
       in: header
