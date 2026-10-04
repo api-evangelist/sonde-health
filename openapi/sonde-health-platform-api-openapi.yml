@@ -204,81 +204,12 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    screening_result_response:
-      type: object
-      properties:
-        requestId:
-          type: string
-          description: request identifier for which the error has occurred.
-        numberOfRecords:
-          type: integer
-          description: total no of records for the given input
-        numberOfPages:
-          type: integer
-          description: total no of pages for the given input.(total no of records/page size)
-        screeningResults:
-          type: array
-          items:
-            $ref: '#/components/schemas/screening_result'
-    token:
-      type: object
-      properties:
-        name:
-          type: string
-          description: name of the token used to perform session
     user:
       type: object
       properties:
         name:
           type: string
           description: email of the user.
-    access_forbidden:
-      type: object
-      properties:
-        code:
-          type: string
-          enum:
-          - FORBIDDEN_ACCESS
-          description: error model for user is not permitted to do an operation.
-        message:
-          type: string
-          description: human readable errror message notifying forbidden access.
-        requestId:
-          type: string
-          description: request identifier for which the error has occurred.
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          enum:
-          - INTERNAL_SERVER_ERROR
-          - PAGE_INDEX_OUT_OF_BOUND
-          description: error code to signify that something went wrong.
-        message:
-          type: string
-          description: human redable description of the error occurred.
-        requestId:
-          type: string
-          description: request identifier for which the error has occurred.
-      required:
-      - code
-      - message
-      - requestId
-    screening_result:
-      type: object
-      properties:
-        calculatedAt:
-          type: string
-          format: date-time
-          description: time at which session is performed Date time in ISO-8601 format.
-        result:
-          type: boolean
-          description: The session outcome PASS or FAIL. PASS - True and FAIL - False
-        token:
-          $ref: '#/components/schemas/token'
-        user:
-          $ref: '#/components/schemas/user'
     not_found:
       type: object
       properties:
@@ -302,6 +233,20 @@ components:
       - code
       - message
       - requestId
+    screening_result:
+      type: object
+      properties:
+        calculatedAt:
+          type: string
+          format: date-time
+          description: time at which session is performed Date time in ISO-8601 format.
+        result:
+          type: boolean
+          description: The session outcome PASS or FAIL. PASS - True and FAIL - False
+        token:
+          $ref: '#/components/schemas/token'
+        user:
+          $ref: '#/components/schemas/user'
     invalid_request:
       type: object
       properties:
@@ -349,6 +294,61 @@ components:
                       type: string
       required:
       - code
+      - requestId
+    access_forbidden:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - FORBIDDEN_ACCESS
+          description: error model for user is not permitted to do an operation.
+        message:
+          type: string
+          description: human readable errror message notifying forbidden access.
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+    token:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the token used to perform session
+    screening_result_response:
+      type: object
+      properties:
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+        numberOfRecords:
+          type: integer
+          description: total no of records for the given input
+        numberOfPages:
+          type: integer
+          description: total no of pages for the given input.(total no of records/page size)
+        screeningResults:
+          type: array
+          items:
+            $ref: '#/components/schemas/screening_result'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          enum:
+          - INTERNAL_SERVER_ERROR
+          - PAGE_INDEX_OUT_OF_BOUND
+          description: error code to signify that something went wrong.
+        message:
+          type: string
+          description: human redable description of the error occurred.
+        requestId:
+          type: string
+          description: request identifier for which the error has occurred.
+      required:
+      - code
+      - message
       - requestId
   securitySchemes:
     OAuth2:
