@@ -64,5 +64,126 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Sonde Health is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Sonde Health is a Boston-based digital health company that turns short voice samples into vocal biomarkers — objective, AI-derived measures of respiratory, mental and cognitive fitness. Founded out of PureTech Health, Sonde has banked over 1,000,000 voice samples from more than 80,000 subjects to train its Health Check models. Partners integrate through the Sonde Platform Service API (a HIPAA-aligned REST API on api.sondeservices.com secured with OAuth 2.0 client-credentials and fine-grained sonde-platform/* scopes), through on-device Passive, Cued and Edge SDKs for Android and iOS, and through OEM integrations such as Qualcomm's Snapdragon Sound platform. The cloud flow is upload-and-score: register a subject, request a signed storage URL, upload a WAV sample, then create an inference job and poll for Respiratory Symptoms Risk, Mental Fitness voice-feature scores, M3/PHQ-2 questionnaire scores, or an English transcription.
+
+**Areas:** Company · Health · Healthcare · Digital Health · Vocal Biomarkers · Voice · Audio · Machine Learning · Artificial Intelligence · Mental Health · Respiratory · Remote Patient Monitoring
+
+## Sonde Health on APIs.io
+
+Everything profiled for Sonde Health is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/sonde-health/](https://apis.io/providers/sonde-health/)** — or go straight to one of the APIs or properties below.
+
+### APIs (3)
+
+- [Sonde Platform Service API](https://apis.io/apis/sonde-health/sonde-platform-service-api/) — The Sonde Platform Service API lets partners run Sonde Vocal Biomarker Health Checks from their own mobile, web and embedded applications. Services cover…
+- [Sonde Health Authentication API](https://apis.io/apis/sonde-health/sonde-health-authentication-api/) — The Authentication API from Sonde Health — 1 operation(s) for authentication.
+- [Sonde Health Platform API](https://apis.io/apis/sonde-health/sonde-health-platform-api/) — The Platform API from Sonde Health — 1 operation(s) for platform.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [sonde-health-mcp.yml](https://apis.io/servers/sonde-health/sonde-health-mcp-yml/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Sonde Health Screening Api Overlay](https://apis.io/overlays/sonde-health/sonde-health-screening-api-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Sonde Health Authentication](https://apis.io/security/sonde-health/sonde-health-authentication/)
+- [Sonde Health Domain Security](https://apis.io/security/sonde-health/sonde-health-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Sonde Health Scopes](https://apis.io/scopes/sonde-health/sonde-health-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Sonde Health Plans Pricing](https://apis.io/plans/sonde-health/sonde-health-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Sonde Health Rate Limits](https://apis.io/rate-limits/sonde-health/sonde-health-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.sondehealth.com/)
+- [Documentation](https://sondehealth.atlassian.net/wiki/spaces/SA/overview)
+- [Getting started](https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2800156688/Getting+Started%3A+Sonde+Cloud+API)
+- [API reference](https://sondehealth.atlassian.net/wiki/spaces/SA/pages/2689105939/REST+API+Reference)
+- [Support](https://www.sondehealth.com/support)
+- [Blog](https://www.sondehealth.com/news-blog)
+- [Terms of service](https://www.sondehealth.com/terms-of-service)
+- [Privacy policy](https://www.sondehealth.com/privacy)
+- [GitHub](https://github.com/sondehealth-samples)
+
+## API Evangelist rating
+
+**Kin Score 46.8** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 41.6 |
+| Contract governance | 0.0 |
+| Operational transparency | 26.3 |
+| Developer ergonomics | 73.2 |
+| Access clarity | 42.1 |
+
+**Agent readiness 24.6** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 39.0** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/sonde-health/](https://apis.io/providers/sonde-health/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Sonde Health: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/sonde-health/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
